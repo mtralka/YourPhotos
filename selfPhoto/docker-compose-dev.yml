@@ -1,0 +1,83 @@
+
+version: "3"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+    restart: unless-stopped
+    ports: 
+      - 8000:8000
+    volumes: 
+      - ./backend/app:/app
+      - ./backend/data:/data
+    depends_on: 
+      - redis
+      - db
+    environment: 
+      - DATABASE_URL=db://postgres:admin@postgres:5432/postgres
+    env_file:
+      - .env
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: frontend.dockerfile
+    restart: unless-stopped
+    ports: 
+      - 9000:9000
+    volumes: 
+      - ./frontend/app:/app
+    depends_on: 
+      - backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - API_VERSION=v1
+    env_file:
+      - .env
+    tty: true
+    
+  worker:
+    build:
+      context: ./backend
+      dockerfile: worker.dockerfile
+    restart: unless-stopped
+    depends_on: 
+      - redis
+      - db
+    volumes:
+      - ./backend/app:/app
+      - ./backend/data:/data
+    environment: 
+      - DATABASE_URL=db://postgres:admin@postgres:5432/postgres
+    env_file:
+      - .env
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+  db:
+    image: postgres:12
+    ports:
+      - 5432:5432
+    # environment:
+    #   POSTGRES_PASSWORD: admin
+    volumes:
+      - ./dev-data/postgres:/var/lib/postgresql/data
+    links:
+      - pgadmin
+    env_file:
+      - .env
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - 5050:80
+    volumes:
+      - ./dev-data/pgadmin:/root/.pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    env_file:
+      - .env
