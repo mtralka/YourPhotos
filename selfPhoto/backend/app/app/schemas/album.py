@@ -1,32 +1,31 @@
 from .base import CamelModel
+from uuid import UUID
+from datetime import datetime
 
-class Album(CamelModel):
-    asset_id: int
-    address: str | None = None
-    postcode: str | None = None
-    place: str | None = None
-    district: str | None = None
-    region: str | None = None
-    country: str | None = None
+
+class AlbumBase(CamelModel):
+    name: str | None
 
 
 # Properties to receive on creation
-class GeocodeCreate(GeocodeBase):
-    pass
+class AlbumCreate(AlbumBase):
+    owner_id: UUID
 
 
 # Properties to receive on update
-class GeocodeUpdate(GeocodeBase):
+class AlbumUpdate(AlbumBase):
     pass
 
 
-class GeocodeInDBBase(GeocodeBase):
-    id: int | None = None
+class AlbumInDBBase(AlbumBase):
+    id: UUID | None = None
+    created_at: datetime | None = None
+    modified_at: datetime | None = None
 
     class Config:
         orm_mode = True
 
 
 # Additional properties to return via API
-class Geocode(GeocodeInDBBase):
+class Album(AlbumInDBBase):
     pass
