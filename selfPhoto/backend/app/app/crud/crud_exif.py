@@ -1,4 +1,5 @@
 from typing import Any
+from uuid import UUID
 
 from app import models
 from app.crud.base import CRUDBase
@@ -11,8 +12,8 @@ from sqlalchemy.orm import Session
 
 
 class CRUDExif(CRUDBase[Exif, ExifCreate, ExifUpdate]):
-    def get_by_id(self, db: Session, *, id: int) -> Exif | None:
-        return db.query(Exif).filter(Exif.id == id).first()
+    # def get_by_id(self, db: Session, *, id: UUID) -> Exif | None:
+    #     return db.query(Exif).filter(Exif.id == id).first()
 
     # def get_by_hash(self, db: Session, *, hash: int) -> Asset | None:
     #     return db.query(Asset).filter(Asset.hash == hash).first()

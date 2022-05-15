@@ -1,3 +1,4 @@
+from uuid import UUID
 
 from pydantic import EmailStr
 
@@ -24,7 +25,7 @@ class UserUpdate(UserBase):
 
 
 class UserInDBBase(UserBase):
-    id: int | None = None
+    id: UUID | None = None
     assets: list[int] | None = None
 
     class Config:

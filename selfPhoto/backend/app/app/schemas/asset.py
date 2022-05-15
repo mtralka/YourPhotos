@@ -1,12 +1,13 @@
 from datetime import datetime
+from uuid import UUID
 
 from .base import CamelModel
+
 
 class AssetBase(CamelModel):
     asset_path: str
     content_type: str
     file_size: int
-    user_id: int
     file_name: str
     file_extension: str
     thumbnail_path: str | None
@@ -14,7 +15,7 @@ class AssetBase(CamelModel):
 
 # Properties to receive on creation
 class AssetCreate(AssetBase):
-    pass
+    user_id: UUID
 
 
 # Properties to receive on update
@@ -24,7 +25,7 @@ class AssetUpdate(CamelModel):
 
 
 class AssetInDBBase(AssetBase):
-    id: int | None = None
+    id: UUID | None = None
     created_at: datetime | None = None
     modified_at: datetime | None = None
 

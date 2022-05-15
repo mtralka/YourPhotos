@@ -1,7 +1,9 @@
+from uuid import UUID
+
 from .base import CamelModel
 
+
 class GeocodeBase(CamelModel):
-    asset_id: int
     address: str | None = None
     postcode: str | None = None
     place: str | None = None
@@ -12,7 +14,7 @@ class GeocodeBase(CamelModel):
 
 # Properties to receive on creation
 class GeocodeCreate(GeocodeBase):
-    pass
+    asset_id: UUID
 
 
 # Properties to receive on update
@@ -21,7 +23,7 @@ class GeocodeUpdate(GeocodeBase):
 
 
 class GeocodeInDBBase(GeocodeBase):
-    id: int | None = None
+    id: UUID | None = None
 
     class Config:
         orm_mode = True

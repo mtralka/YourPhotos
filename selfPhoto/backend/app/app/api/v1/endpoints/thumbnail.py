@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 from app import crud
 from app import models
@@ -19,13 +20,13 @@ async def get_thumbnail(
     *,
     db: Session = Depends(deps.get_db),
     # current_user: models.User = Depends(deps.get_current_active_user),
-    id: int
+    id: str
 ) -> Any:
     """
     Return an asset's thumbnail
     """
 
-    asset: models.Asset | None = crud.asset.get_by_id(db, id=id)
+    asset: models.Asset | None = crud.asset.get_by_id(db, id=UUID(id))
 
     if not asset or not Path(asset.thumbnail_path).exists():
         raise HTTPException(

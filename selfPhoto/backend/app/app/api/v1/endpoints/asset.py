@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 import aiofiles
 from app import crud
@@ -14,6 +15,8 @@ from fastapi import HTTPException
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+
+# curl -X 'POST' 'http://localhost:8000/api/v1/assets/' -H 'accept: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTMyNjMyNjMsInN1YiI6ImNmNGI3NjNhLTU3YmUtNDI5Ni1iZGVmLTNjZTcxOWU3NjZlNCJ9.XDmoo3OsJ0MkiXZig1rygDT2H8e8OU9OSnSn31TAaEk' -H 'Content-Type: multipart/form-data' -F 'assets=@C:\Users\mtral\Downloads\placeholder_photos\pexels-alexander-ant-5603660.jpg;type=image/jpeg'
 
 router = APIRouter()
 
@@ -56,13 +59,13 @@ async def get_asset_by_id(
     *,
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
-    id: int,
+    id: str,
 ) -> Any:
     """
     Return an asset by ID
     """
 
-    asset: schemas.Asset | None = crud.asset.get_by_id(db, id=id)
+    asset: schemas.Asset | None = crud.asset.get_by_id(db, id=UUID(id))
 
     if not asset:
         raise HTTPException(
