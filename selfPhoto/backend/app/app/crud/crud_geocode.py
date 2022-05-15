@@ -1,4 +1,5 @@
 from typing import Any
+from uuid import UUID
 
 from app.crud.base import CRUDBase
 from app.models import Geocode
@@ -9,8 +10,8 @@ from sqlalchemy.orm import Session
 
 
 class CRUDGeocode(CRUDBase[Geocode, GeocodeCreate, GeocodeUpdate]):
-    def get_by_id(self, db: Session, *, id: int) -> Geocode | None:
-        return db.query(Geocode).filter(Geocode.id == id).first()
+    # def get_by_id(self, db: Session, *, id: UUID) -> Geocode | None:
+    #     return db.query(Geocode).filter(Geocode.id == id).first()
 
     # def create(self, db: Session, *, obj_in: GeocodeCreate) -> Geocode:
     #     obj_in_data = jsonable_encoder(obj_in)

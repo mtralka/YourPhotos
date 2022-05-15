@@ -1,3 +1,6 @@
+from uuid import UUID
+
+from pydantic import BaseModel
 
 from .base import CamelModel
 
@@ -7,5 +10,5 @@ class Token(CamelModel):
     token_type: str
 
 
-class TokenPayload(CamelModel):
-    sub: int | None = None
+class TokenPayload(BaseModel):
+    sub: int | UUID | None = None

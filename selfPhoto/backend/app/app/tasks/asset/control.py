@@ -16,13 +16,13 @@ from app.schemas import GeocodeCreate
 from .exif import extract_exif_data
 from .geocode import geocode
 from .thumbnail import generate_thumbnail
-
+from uuid import UUID
 
 # db = SessionLocal()
 
 
 @huey.task()
-def process_asset(asset_id: int):
+def process_asset(asset_id: UUID):
 
     # db = SessionLocal()
 

@@ -4,6 +4,7 @@ from email.policy import default
 from enum import Enum
 from enum import unique
 from typing import Final
+import uuid
 
 from app.db.base_class import Base
 from sqlalchemy import Column
@@ -13,41 +14,19 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import SmallInteger
 from sqlalchemy import String
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
 
 
-# if TYPE_CHECKING:
-#     from .item import Item  # noqa: F401
-
 # https://www.media.mit.edu/pia/Research/deepview/exif.html
-
-# EXIF_TAGS: Final[dict[str, str]] = {
-#     "image_description": "0x010e",
-#     "make": "0x010f",
-#     "model": "0x0110",
-#     "x_resolution": "0x011a",
-#     "y_resolution": "0x011b",
-#     "resolution_unit": "0x0128",
-#     "datetime": "0x0132",
-# }
-
-# class ExifTags(Enum):
-
-# EXIF_LOOKUP: Final[dict[str,str]] = {
-#     "make":"Make",
-#     "model": "Model",
-#     "x_resolution": "XResolution"
-#     "y_resolution": "YResolution"
-
-
-# }
 
 
 class Exif(Base):
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    asset_id = Column(Integer)  # ForeignKey('asset.id')
+    asset_id = Column(UUID(as_uuid=True), ForeignKey("asset.id"), unique=True)
+    asset = relationship("Asset", back_populates="exif")
     # asset = relationship("Asset", back_populates="exif")
 
     image_description = Column(String, nullable=True, default=None)

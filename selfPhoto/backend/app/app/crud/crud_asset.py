@@ -1,5 +1,6 @@
 import time
 from typing import Any
+from uuid import UUID
 
 from app.crud.base import CRUDBase
 from app.models.asset import Asset
@@ -10,8 +11,8 @@ from sqlalchemy.orm import Session
 
 
 class CRUDAsset(CRUDBase[Asset, AssetCreate, AssetUpdate]):
-    def get_by_id(self, db: Session, *, id: int) -> Asset | None:
-        return db.query(Asset).filter(Asset.id == id).first()
+    # def get_by_id(self, db: Session, *, id: UUID) -> Asset | None:
+    #     return db.query(Asset).filter(Asset.id == id).first()
 
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> list[Asset]:
         return (
@@ -35,21 +36,23 @@ class CRUDAsset(CRUDBase[Asset, AssetCreate, AssetUpdate]):
         )
 
     def create(self, db: Session, *, obj_in: AssetCreate) -> Asset:
-        db_obj = Asset(
-            content_type=obj_in.content_type,
-            asset_path=obj_in.asset_path,
-            file_size=obj_in.file_size,
-            user_id=obj_in.user_id,
-            file_name=obj_in.file_name,
-            file_extension=obj_in.file_extension,
-        )
-        db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
+        asset: Asset = super().create(db, obj_in=obj_in)
 
-        process_asset(db_obj.id)
+        # db_obj = Asset(
+        #     content_type=obj_in.content_type,
+        #     asset_path=obj_in.asset_path,
+        #     file_size=obj_in.file_size,
+        #     user_id=obj_in.user_id,
+        #     file_name=obj_in.file_name,
+        #     file_extension=obj_in.file_extension,
+        # )
+        # db.add(db_obj)
+        # db.commit()
+        # db.refresh(db_obj)
 
-        return db_obj
+        process_asset(asset.id)
+
+        return asset
 
     def update(
         self, db: Session, *, db_obj: Asset, obj_in: AssetUpdate | dict[str, Any]

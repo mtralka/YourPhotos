@@ -1,6 +1,7 @@
 from typing import Any
 from typing import Generic
 from typing import TypeVar
+from uuid import UUID
 
 from app.db.base_class import Base
 from fastapi.encoders import jsonable_encoder
@@ -31,6 +32,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> list[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
+
+    def get_by_id(self, db: Session, *, id: UUID) -> ModelType | None:
+        if not hasattr(self.model, "id"):
+            return None
+
+        return db.query(self.model).filter(self.model.id == id).first()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)

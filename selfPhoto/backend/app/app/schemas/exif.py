@@ -1,5 +1,7 @@
+from uuid import UUID
 
 from .base import CamelModel
+
 
 class ExifBase(CamelModel):
     image_description: str | None = None
@@ -23,7 +25,7 @@ class ExifBase(CamelModel):
 
 # Properties to receive on creation
 class ExifCreate(ExifBase):
-    asset_id: int
+    asset_id: UUID
 
 
 # Properties to receive on update
@@ -32,7 +34,7 @@ class ExifUpdate(ExifBase):
 
 
 class ExifInDBBase(ExifBase):
-    id: int | None = None
+    id: UUID | None = None
 
     class Config:
         orm_mode = True
