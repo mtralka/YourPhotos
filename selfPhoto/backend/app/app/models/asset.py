@@ -12,7 +12,6 @@ from sqlalchemy.sql import func
 
 
 class Asset(Base):
-    #  id = Column(Integer, primary_key=True, index=True)
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     content_type = Column(String, nullable=False)
@@ -26,20 +25,13 @@ class Asset(Base):
     created_at = Column(DateTime, nullable=False, default=func.now())
     modified_at = Column(DateTime, nullable=False, default=func.now())
 
-    ##
-    # User
-    ##
-    # user_id = Column(Integer, ForeignKey("user.id"))
-    # user = relationship("User", back_populates="assets")
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
     user = relationship("User", back_populates="assets")
 
-    ##
-    # Exif
-    ##
-    exif = relationship("Exif", back_populates="asset", uselist=False)
+    exif = relationship("Exif", back_populates="asset", uselist=False, cascade="all, delete")
+    geocode = relationship("Geocode", back_populates="asset", uselist=False, cascade="all, delete")
 
-    geocode = relationship("Geocode", back_populates="asset", uselist=False)
+    albums = relationship("AlbumAsset", cascade="all, delete", back_populates="asset")
 
     ##
     # Geocode

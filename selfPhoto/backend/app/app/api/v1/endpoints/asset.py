@@ -35,7 +35,7 @@ async def create_asset(
     return await handle_file_upload(db, current_user, asset)
 
 
-@router.post("/assets/", response_model=list[schemas.Asset])
+@router.post("/assets", response_model=list[schemas.Asset])
 async def create_assets(
     *,
     db: Session = Depends(deps.get_db),

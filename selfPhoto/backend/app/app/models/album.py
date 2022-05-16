@@ -18,12 +18,10 @@ class Album(Base):
     owner_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
     owner = relationship("User", back_populates="albums")
 
-    # owner_id = Column(String, index=True)
-
     created_at = Column(DateTime, nullable=False, default=func.now())
     modifed_at = Column(DateTime, nullable=False, default=func.now())
 
     name = Column(String, nullable=True, default=None)
 
-    # album_users = relationship("AlbumUser", back_populates="album", cascade="all, delete", foreign_keys='AlbumUser.album_id')
     album_users = relationship("AlbumUser", cascade="all, delete")
+    album_assets = relationship("AlbumAsset", cascade="all, delete")

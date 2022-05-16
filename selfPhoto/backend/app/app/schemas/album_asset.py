@@ -4,27 +4,29 @@ from uuid import UUID
 from .base import CamelModel
 
 
-class AlbumUserBase(CamelModel):
-    is_editor: bool
-
-
-# Properties to receive on creation
-class AlbumUserCreate(AlbumUserBase):
-    album_id: UUID
-    owner_id: UUID
-
-# Properties to receive on update
-class AlbumUserUpdate(AlbumUserBase):
+class AlbumAssetBase(CamelModel):
     pass
 
 
-class AlbumUserInDBBase(AlbumUserBase):
+# Properties to receive on creation
+class AlbumAssetCreate(AlbumAssetBase):
+    album_id: UUID
+    asset_id: UUID
+
+
+# Properties to receive on update
+class AlbumAssetUpdate(AlbumAssetBase):
+    pass
+
+
+class AlbumAssetInDBBase(AlbumAssetBase):
     id: UUID | None = None
+    created_at: datetime | None = None
 
     class Config:
         orm_mode = True
 
 
 # Additional properties to return via API
-class AlbumUser(AlbumUserInDBBase):
+class AlbumAsset(AlbumAssetInDBBase):
     pass

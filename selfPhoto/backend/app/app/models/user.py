@@ -10,12 +10,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 
-# if TYPE_CHECKING:
-#     from .item import Item  # noqa: F401
-
-
 class User(Base):
-    # id = Column(Integer, primary_key=True, index=True)
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     full_name = Column(String, index=True)
@@ -23,10 +18,8 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
-    # items = relationship("Item", back_populates="owner")
 
-    # assets = relationship("Asset")
-    assets = relationship("Asset", back_populates="user")
+    assets = relationship("Asset", back_populates="user", cascade="all, delete")
 
-    albums = relationship("Album", back_populates="owner", uselist=False)
+    albums = relationship("Album", back_populates="owner", uselist=False, cascade="all, delete")
     shared_albums = relationship("AlbumUser", back_populates="user")

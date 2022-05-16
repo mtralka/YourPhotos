@@ -33,9 +33,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> list[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
 
-    def get_by_id(self, db: Session, *, id: UUID) -> ModelType | None:
+    def get_by_id(self, db: Session, *, id: UUID | str) -> ModelType | None:
         if not hasattr(self.model, "id"):
             return None
+
+        if isinstance(id, str):
+            id = UUID(id)
 
         return db.query(self.model).filter(self.model.id == id).first()
 

@@ -1,6 +1,7 @@
-from .base import CamelModel
-from uuid import UUID
 from datetime import datetime
+from uuid import UUID
+
+from .base import CamelModel
 
 
 class AlbumBase(CamelModel):
