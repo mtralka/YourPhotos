@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get("/{id}", response_class=FileResponse)
+@router.get("/assets/{id}/media", response_class=FileResponse)
 async def get_media(
     *,
     db: Session = Depends(deps.get_db),

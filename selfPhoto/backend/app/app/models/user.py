@@ -21,5 +21,7 @@ class User(Base):
 
     assets = relationship("Asset", back_populates="user", cascade="all, delete")
 
-    albums = relationship("Album", back_populates="owner", uselist=False, cascade="all, delete")
+    albums = relationship(
+        "Album", back_populates="owner", uselist=False, cascade="all, delete"
+    )
     shared_albums = relationship("AlbumUser", back_populates="user")

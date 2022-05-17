@@ -19,8 +19,7 @@ class AlbumAssetUpdate(AlbumAssetBase):
     pass
 
 
-class AlbumAssetInDBBase(AlbumAssetBase):
-    id: UUID | None = None
+class AlbumAssetInDBBase(AlbumAssetCreate):
     created_at: datetime | None = None
 
     class Config:

@@ -15,17 +15,14 @@ from sqlalchemy.orm import Session
 
 
 class CRUDAlbum(CRUDBase[Album, AlbumCreate, AlbumUpdate]):
-    
-    def get_multi_by_owner(
-        self, db: Session, *, user_id: int
-        ) -> list[Album]:
+    def get_multi_by_owner(self, db: Session, *, user_id: int) -> list[Album]:
         return (
-        db.query(Album, )
-        .filter(Album.owner_id == user_id)
-        .all()
+            db.query(
+                Album,
+            )
+            .filter(Album.owner_id == user_id)
+            .all()
         )
-    
-
 
 
 album = CRUDAlbum(Album)

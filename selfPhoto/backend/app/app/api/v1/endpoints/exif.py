@@ -13,7 +13,7 @@ from uuid import UUID
 router = APIRouter()
 
 
-@router.get("/{id}", response_model=schemas.Exif)
+@router.get("/assets/{id}/exif", response_model=schemas.Exif)
 async def get_exif(
     *,
     db: Session = Depends(deps.get_db),

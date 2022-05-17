@@ -28,8 +28,12 @@ class Asset(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
     user = relationship("User", back_populates="assets")
 
-    exif = relationship("Exif", back_populates="asset", uselist=False, cascade="all, delete")
-    geocode = relationship("Geocode", back_populates="asset", uselist=False, cascade="all, delete")
+    exif = relationship(
+        "Exif", back_populates="asset", uselist=False, cascade="all, delete"
+    )
+    geocode = relationship(
+        "Geocode", back_populates="asset", uselist=False, cascade="all, delete"
+    )
 
     albums = relationship("AlbumAsset", cascade="all, delete", back_populates="asset")
 

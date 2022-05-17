@@ -16,23 +16,7 @@ from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 
-# curl -X 'POST' 'http://localhost:8000/api/v1/assets/' -H 'accept: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTMyNjMyNjMsInN1YiI6ImNmNGI3NjNhLTU3YmUtNDI5Ni1iZGVmLTNjZTcxOWU3NjZlNCJ9.XDmoo3OsJ0MkiXZig1rygDT2H8e8OU9OSnSn31TAaEk' -H 'Content-Type: multipart/form-data' -F 'assets=@C:\Users\mtral\Downloads\placeholder_photos\pexels-alexander-ant-5603660.jpg;type=image/jpeg'
-
 router = APIRouter()
-
-
-@router.post("/asset", response_model=schemas.Asset)
-async def create_asset(
-    *,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
-    asset: UploadFile,
-) -> Any:
-    """
-    Create a new asset
-    """
-
-    return await handle_file_upload(db, current_user, asset)
 
 
 @router.post("/assets", response_model=list[schemas.Asset])
@@ -54,7 +38,7 @@ async def create_assets(
     return generated_assets
 
 
-@router.get("/asset/{id}", response_model=schemas.Asset)
+@router.get("/assets/{id}", response_model=schemas.Asset)
 async def get_asset_by_id(
     *,
     db: Session = Depends(deps.get_db),
@@ -83,7 +67,7 @@ async def get_asset_by_id(
 
 
 @router.get("/assets", response_model=list[schemas.Asset])
-async def get_assets(
+async def get_paginated_assets(
     *,
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
