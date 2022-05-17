@@ -22,5 +22,7 @@ class AlbumUser(Base):
 
     is_editor = Column(Boolean, default=False, nullable=False)
 
+    # can edit
     # can_remove_assets
     # can_add_assets
+    # can_share

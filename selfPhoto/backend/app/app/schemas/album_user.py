@@ -13,6 +13,7 @@ class AlbumUserCreate(AlbumUserBase):
     album_id: UUID
     owner_id: UUID
 
+
 # Properties to receive on update
 class AlbumUserUpdate(AlbumUserBase):
     pass
