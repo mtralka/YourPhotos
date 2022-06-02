@@ -24,3 +24,7 @@ from .user import User
 from .user import UserCreate
 from .user import UserInDB
 from .user import UserUpdate
+from .album_asset import AlbumAsset
+from .album_asset import AlbumAssetCreate
+from .album_asset import AlbumAssetInDBBase
+from .album_asset import AlbumAssetUpdate

@@ -25,7 +25,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    def get(self, db: Session, id: Any) -> ModelType | None:
+    def get(self, db: Session, id: UUID) -> ModelType | None:
         return db.query(self.model).filter(self.model.id == id).first()
 
     def get_multi(
@@ -33,9 +33,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> list[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
 
-    def get_by_id(self, db: Session, *, id: UUID) -> ModelType | None:
+    def get_by_id(self, db: Session, *, id: UUID | str) -> ModelType | None:
         if not hasattr(self.model, "id"):
             return None
+
+        if isinstance(id, str):
+            id = UUID(id)
 
         return db.query(self.model).filter(self.model.id == id).first()
 
@@ -71,7 +74,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
 
-    def remove(self, db: Session, *, id: int) -> ModelType:
+    def remove(self, db: Session, *, obj: ModelType) -> ModelType:
+        db.delete(obj)
+        db.commit()
+        return obj
+
+    def remove_by_id(self, db: Session, *, id: UUID) -> ModelType:
         obj = db.query(self.model).get(id)
         db.delete(obj)
         db.commit()

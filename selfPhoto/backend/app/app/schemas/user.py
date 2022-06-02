@@ -2,6 +2,7 @@ from uuid import UUID
 
 from pydantic import EmailStr
 
+from .asset import Asset
 from .base import CamelModel
 
 
@@ -26,7 +27,7 @@ class UserUpdate(UserBase):
 
 class UserInDBBase(UserBase):
     id: UUID | None = None
-    assets: list[int] | None = None
+    assets: list[Asset] | None = None
 
     class Config:
         orm_mode = True
