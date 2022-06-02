@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from app import crud
 from app.models import Album
 from app.models import User
@@ -16,7 +14,7 @@ class AlbumAuthValidator(AuthValidator):
             return True
 
         shared_users = crud.album_user.get_by_album_id(db, album_id=album.id)
-        shared_user_ids = [user.id for user in shared_users if user.can_add_assets]
+        shared_user_ids = [user.user_id for user in shared_users if user.can_add_assets]
 
         if user.id in shared_user_ids:
             return True
@@ -26,13 +24,18 @@ class AlbumAuthValidator(AuthValidator):
     @classmethod
     def can_user_remove_assets(cls, db: Session, user: User, album: Album) -> bool:
 
-        return cls.is_admin_or_owner(user, album)
+        if cls.is_admin_or_owner(user, album):
+            return True
 
-    # @classmethod
-    # def can_user_delete(cls, db: Session, user: User, album: Album) -> bool:
-    #     """Can the user delete the album?"""
+        shared_users = crud.album_user.get_by_album_id(db, album_id=album.id)
+        shared_user_ids = [
+            user.user_id for user in shared_users if user.can_remove_assets
+        ]
 
-    #     return cls.is_admin_or_owner(user, album)
+        if user.id in shared_user_ids:
+            return True
+
+        return False
 
     @classmethod
     def can_user_view(cls, db: Session, user: User, album: Album) -> bool:
@@ -42,7 +45,7 @@ class AlbumAuthValidator(AuthValidator):
             return True
 
         shared_users = crud.album_user.get_by_album_id(db, album_id=album.id)
-        shared_user_ids = [user.id for user in shared_users]
+        shared_user_ids = [user.user_id for user in shared_users]
 
         if user.id in shared_user_ids:
             return True
@@ -51,13 +54,13 @@ class AlbumAuthValidator(AuthValidator):
 
     @classmethod
     def can_user_edit(cls, db: Session, user: User, album: Album) -> bool:
-        """Can the user view photos from the album?"""
+        """Can the user edit the album?"""
 
         if cls.is_admin_or_owner(user, album):
             return True
 
         shared_users = crud.album_user.get_by_album_id(db, album_id=album.id)
-        shared_user_ids = [user.id for user in shared_users if user.can_edit]
+        shared_user_ids = [user.user_id for user in shared_users if user.can_edit_album]
 
         if user.id in shared_user_ids:
             return True

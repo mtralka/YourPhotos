@@ -5,13 +5,13 @@ from .base import CamelModel
 
 
 class AlbumAssetBase(CamelModel):
-    pass
+    asset_id: UUID
+    album_id: UUID
 
 
 # Properties to receive on creation
 class AlbumAssetCreate(AlbumAssetBase):
-    album_id: UUID
-    asset_id: UUID
+    pass
 
 
 # Properties to receive on update
@@ -19,7 +19,8 @@ class AlbumAssetUpdate(AlbumAssetBase):
     pass
 
 
-class AlbumAssetInDBBase(AlbumAssetCreate):
+class AlbumAssetInDBBase(AlbumAssetBase):
+
     created_at: datetime | None = None
 
     class Config:

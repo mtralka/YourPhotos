@@ -15,17 +15,17 @@ class AuthValidator:
         return False
 
     @classmethod
-    def can_user_edit(cls, db: Session, user: User, obj: Album) -> bool:
+    def can_user_edit(cls, db: Session, user: User, obj: Any) -> bool:
         return cls.is_admin_or_owner(user, obj)
 
     @classmethod
-    def can_user_view(cls, db: Session, user: User, obj: Album) -> bool:
+    def can_user_view(cls, db: Session, user: User, obj: Any) -> bool:
         return cls.is_admin_or_owner(user, obj)
 
     @classmethod
-    def can_user_delete(cls, db: Session, user: User, obj: Album) -> bool:
+    def can_user_delete(cls, db: Session, user: User, obj: Any) -> bool:
         return cls.is_admin_or_owner(user, obj)
 
     @classmethod
-    def can_user_create(cls, db: Session, user: User, obj: Album) -> bool:
-        return cls.is_admin_or_owner(user, obj)
+    def can_user_create(cls, db: Session, user: User) -> bool:
+        return user.is_active

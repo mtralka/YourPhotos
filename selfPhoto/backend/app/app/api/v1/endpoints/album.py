@@ -11,6 +11,7 @@ from app.auth_validators import AlbumAuthValidator
 from app.schemas.album import AlbumCreate
 from app.schemas.album_asset import AlbumAssetCreate
 from fastapi import APIRouter
+from fastapi import Body
 from fastapi import Depends
 from fastapi import Path
 from fastapi import Query
@@ -24,25 +25,20 @@ router = APIRouter()
 async def create_album(
     *,
     db: Session = Depends(deps.get_db),
+    album_in: AlbumCreate,
     current_user: models.User = Depends(deps.get_current_active_user),
-    name: str
-    | None = Query(
-        default=None,
-        title="Album Name",
-        description="Name of album to create",
-        example="My first album",
-    ),
 ) -> Any:
     """
     Create a new album
     """
 
-    return crud.album.create(
-        db, obj_in=AlbumCreate(name=name, owner_id=current_user.id)
-    )
+    if not AlbumAuthValidator.can_user_create(db, current_user):
+        raise_permissions_error()
+
+    return crud.album.create(db, obj_in=AlbumCreate(**album_in))
 
 
-@router.delete("/{id}", status_code=204)
+@router.delete("/{id}", responses={204: {"model": None}})
 async def delete_album(
     *,
     db: Session = Depends(deps.get_db),
@@ -63,6 +59,8 @@ async def delete_album(
         raise_permissions_error()
 
     crud.album.remove(db, obj=album)
+
+    pass
 
 
 @router.put("/{id}", response_model=schemas.Album)
@@ -91,7 +89,7 @@ def update_album(
 
 
 @router.post("/{id}/assets", response_model=schemas.AlbumAsset)
-async def add_assets_to_album(
+async def add_asset_to_album(
     *,
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
@@ -100,17 +98,13 @@ async def add_assets_to_album(
         title="UUID of target album",
         example="e8e99722-740e-4355-b18b-82da5b995cc1",
     ),
-    assets: UUID = Query(
-        default=...,
-        title="User UUIDs",
-        description="List of asset UUIDs you wish to add to this album",
-    ),
+    asset_id: UUID = Body(..., alias="assetId"),
 ) -> Any:
     """
     Add assets by UUID to album
     """
-    # TODO make this work with query lists
-    # TODO what should this return?
+    # TODO make this work with lists
+
     if (album := crud.album.get_by_id(db, id=id)) is None:
         raise_not_exists("album")
 
@@ -118,7 +112,7 @@ async def add_assets_to_album(
         raise_permissions_error()
 
     return crud.album_asset.create(
-        db, obj_in=AlbumAssetCreate(album_id=id, asset_id=assets)
+        db, obj_in=AlbumAssetCreate(album_id=id, asset_id=asset_id)
     )
 
 
@@ -217,7 +211,7 @@ async def get_album_assets(
     ),
 ) -> Any:
     """
-    Retrieve album
+    Retrieve album assets
     """
 
     if (album := crud.album.get_by_id(db, id=id)) is None:

@@ -1,27 +1,31 @@
-from datetime import datetime
 from uuid import UUID
 
 from .base import CamelModel
 
 
 class AlbumUserBase(CamelModel):
-    is_editor: bool
+    album_id: UUID
+    user_id: UUID
+    can_edit_album: bool
+    can_share_album: bool
+    can_remove_assets: bool
+    can_add_assets: bool
 
 
 # Properties to receive on creation
 class AlbumUserCreate(AlbumUserBase):
-    album_id: UUID
-    owner_id: UUID
-
-
-# Properties to receive on update
-class AlbumUserUpdate(AlbumUserBase):
     pass
 
 
-class AlbumUserInDBBase(AlbumUserBase):
-    id: UUID | None = None
+# Properties to receive on update
+class AlbumUserUpdate(CamelModel):
+    can_edit_album: bool | None
+    can_share_album: bool | None
+    can_remove_assets: bool | None
+    can_add_assets: bool | None
 
+
+class AlbumUserInDBBase(AlbumUserBase):
     class Config:
         orm_mode = True
 
