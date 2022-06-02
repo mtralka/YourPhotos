@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 
 
 class CRUDAsset(CRUDBase[Asset, AssetCreate, AssetUpdate]):
-
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> list[Asset]:
         return (
             db.query(self.model)
@@ -36,8 +35,9 @@ class CRUDAsset(CRUDBase[Asset, AssetCreate, AssetUpdate]):
     def create(self, db: Session, *, obj_in: AssetCreate) -> Asset:
         asset: Asset = super().create(db, obj_in=obj_in)
 
-        process_asset(asset.id)
+        process_asset(asset)
 
         return asset
+
 
 asset = CRUDAsset(Asset)

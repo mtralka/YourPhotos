@@ -16,25 +16,11 @@ from app.schemas import GeocodeCreate
 from .exif import extract_exif_data
 from .geocode import geocode
 from .thumbnail import generate_thumbnail
-from uuid import UUID
-
-# db = SessionLocal()
 
 
 @huey.task()
-def process_asset(asset_id: UUID):
-
-    # db = SessionLocal()
-
+def process_asset(asset: Asset):
     with SessionLocal() as db:
-        # Asset
-        # tasks: list = []
-
-        asset: Asset | None = crud.asset.get_by_id(db=db, id=asset_id)
-
-        if not asset:
-            print("FAILED")
-            return
 
         asset_path: Path = Path(asset.asset_path)
 
@@ -61,7 +47,7 @@ def process_asset(asset_id: UUID):
         exif_data: dict[str, Any] = extract_exif_data(asset_path)
         print(exif_data)
         exif_object: Exif = crud.exif.create(
-            db, obj_in=ExifCreate(asset_id=asset_id, **exif_data)
+            db, obj_in=ExifCreate(asset_id=asset.id, **exif_data)
         )
 
         ##
@@ -83,7 +69,7 @@ def process_asset(asset_id: UUID):
         # we create a row even if we didn't geocode the photo
         # as this row is used for manual location-setting
         geocode_object: Geocode = crud.geocode.create(
-            db, obj_in=GeocodeCreate(asset_id=asset_id, **geocode_data)
+            db, obj_in=GeocodeCreate(asset_id=asset.id, **geocode_data)
         )
 
         ##
