@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useSettingsStore, eAlbumSortMethod } from 'src/stores/settingsStore';
-import { computed } from 'vue';
-import pageSubHeading from 'src/components/pageSubHeading.vue';
 import contentWrapper from 'src/components/contentWrapper.vue';
+import pageSubHeading from 'src/components/pageSubHeading.vue';
+import { eAlbumSortMethod, useSettingsStore } from 'src/stores/settingsStore';
 
 const settingsStore = useSettingsStore();
 </script>

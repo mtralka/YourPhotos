@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { API } from 'src/api/';
+import { Asset } from 'src/api';
 import { useAssetStore } from 'src/stores/assetStore';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-
 const assetStore = useAssetStore();
 const router = useRouter();
 
 const props = defineProps<{
-  assets: Array<any>;
+  assets: Array<Asset> | Array<null>;
   title?: string;
   infiniteScrollOffset?: number;
 }>();
@@ -27,7 +26,9 @@ onMounted(() => {
   //   infiniteScrollContainer.value.resume();
   //   // infiniteScrollContainer.value.trigger();
   // }, 100);
+  //infiniteScrollContainer.value.resume();
   // infiniteScrollContainer.value.reset();
+  //infiniteScrollContainer.value.resume();
 });
 
 /*******
@@ -52,9 +53,9 @@ watch(props.assets, () => {
 const handleRefresh = (done: any) => {
   emit('refresh', done);
 
-  assetStore.refreshAssets().then(() => {
-    done();
-  });
+  // assetStore.refreshAssets().then(() => {
+  //   done();
+  // });
 
   if (!infiniteScrollContainer.value) {
     return;
@@ -68,7 +69,7 @@ const handleRefresh = (done: any) => {
  */
 const handleInfiniteScrollLoad = (index: number, done: any) => {
   emit('infiniteScrollLoad', index, done);
-
+  console.log('Trigger infinite scroll. Index ', index);
   const numberOfAssets = assetStore.getAssets.length;
   const skip = assetStore.calculatePaginationIndex(index);
   assetStore
@@ -107,16 +108,16 @@ const handleAssetClick = (asset: any, index: number) => {
         ref="infiniteScrollContainer"
       >
         <div class="row items-center justify-evenly q-gutter-xs q-pb-md">
-          <div v-for="(asset, index) in assets" :key="asset.id">
+          <div v-for="(asset, index) in assets" :key="asset?.id">
             <div
               style="min-width: max(16vw, 100px)"
-              :id="asset.id"
+              :id="asset?.id"
               @click="handleAssetClick(asset, index)"
             >
               <!-- :src="asset.thumbnail" -->
               <q-img
                 class="q-pa-sm cursor-pointer"
-                :src="`${API}/thumbnail/${asset.id}`"
+                :src="`http://localhost:8000/api/v1/assets/${asset?.id}/thumbnail`"
                 loading="lazy"
                 height="100%"
                 width="100%"

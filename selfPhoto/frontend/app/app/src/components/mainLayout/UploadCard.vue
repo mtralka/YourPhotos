@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { uploadAssets } from 'src/api/assets';
+import { Asset, AssetsService, CancelablePromise } from 'src/api';
+// import { useAssetStore } from 'src/stores/assetStore';
 import { ref, watch } from 'vue';
-
 const computerUpload = ref(null);
 const files = ref(null);
+
+// const assetStore = useAssetStore();
 
 const handleComputerUpload = () => {
   computerUpload.value.pickFiles();
 };
 
 watch(files, async (newValue, oldValue) => {
-  const newAssets = await uploadAssets(newValue);
+  const newAssets: CancelablePromise<Asset[]> =
+    await AssetsService.createAssets({ formData: { assets: newValue } });
   console.log('new assets', newAssets);
+  // assetStore.assets.concat(newAssets);
 });
 </script>
 

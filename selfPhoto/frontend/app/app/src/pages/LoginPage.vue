@@ -9,8 +9,8 @@ const router = useRouter();
 const $q = useQuasar();
 const { t } = useI18n();
 
-const emailInput = ref(null);
-const passwordInput = ref(null);
+const emailInput = ref('');
+const passwordInput = ref('');
 
 const email = ref(null);
 const password = ref(null);
