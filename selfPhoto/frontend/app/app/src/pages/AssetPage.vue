@@ -7,7 +7,7 @@ import {
   usePointerSwipe,
   whenever,
 } from '@vueuse/core';
-import { API } from 'src/api/';
+import { Asset } from 'src/api';
 import AssetAddToAlbumCard from 'src/components/asset/AssetAddToAlbumCard.vue';
 import AssetInfoDrawer from 'src/components/asset/AssetInfoDrawer.vue';
 import AssetMoreOptionsCard from 'src/components/asset/AssetMoreOptionsCard.vue';
@@ -90,7 +90,7 @@ const toggleInfo = () => {
 };
 
 const changeAsset = async (step: number) => {
-  const newAsset: number | undefined = await assetStore.incrementAsset(step);
+  const newAsset: Asset | undefined = await assetStore.incrementAsset(step);
   // TODO
   if (!newAsset) return;
   router.replace({ path: `/m/${newAsset.id}` });
@@ -108,7 +108,7 @@ const downloadAsset = () => {
   // window.open(`${API}/media/${assetStore.getCurrentAsset.id}`, '_blank');
 
   const url = window.URL.createObjectURL(
-    new Blob([`${API}/media/${assetStore.getCurrentAsset.id}`])
+    new Blob([`/api/v1/${assetStore.getCurrentAsset.id}/media`])
   );
   const link = document.createElement('a');
   link.href = url;
@@ -402,12 +402,12 @@ whenever(keys.shift_d || keys.shift_D, () => {
           img-class="q-pa-md"
           :src="
             assetStore.getCurrentAsset
-              ? `${API}/media/${assetStore.getCurrentAsset.id}`
+              ? `http://localhost:8000/api/v1/assets/${assetStore.getCurrentAsset.id}/media`
               : ''
           "
           :placeholder-src="
             assetStore.getCurrentAsset
-              ? `${API}/thumbnail/${assetStore.getCurrentAsset.id}`
+              ? `http://localhost:8000/api/v1/assets/${assetStore.getCurrentAsset.id}/thumbnail`
               : ''
           "
           loading="eager"

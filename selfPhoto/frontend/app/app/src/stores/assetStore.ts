@@ -1,30 +1,29 @@
 import { defineStore } from 'pinia';
-import { getAssetById, getAssets as getAssetsAPI } from 'src/old_api/assets';
-import { iAsset, iGetAssets } from 'src/old_api/models';
+import { Asset, AssetsService, CancelablePromise } from 'src/api';
+import { iPagination } from 'src/extraApiModels';
 import { useUserStore } from './userStore';
-
 export interface assetState {
   assetBatchSize: number;
   currentAssetIndex: number | undefined;
   // currentAsset: iAsset | undefined;
-  assets: Array<iAsset>;
+  assets: Array<Asset>;
 }
 
 export const useAssetStore = defineStore('assetStore', {
   state: () =>
     ({
-      assetBatchSize: 20,
+      assetBatchSize: 50,
       currentAssetIndex: undefined,
       // currentAsset: undefined,
       assets: [],
     } as assetState),
   getters: {
-    getAssets(state): Array<iAsset> | Array<null> {
+    getAssets(state): Array<Asset> | Array<null> {
       return state.assets;
     },
-    getCurrentAsset(state): iAsset | undefined {
+    getCurrentAsset(state): Asset | undefined {
       // return state.currentAsset;
-      const asset: iAsset | undefined = state.assets.at(
+      const asset: Asset | undefined = state.assets.at(
         state.currentAssetIndex
       );
 
@@ -42,7 +41,7 @@ export const useAssetStore = defineStore('assetStore', {
     /*
       loadAllAssets
     */
-    async loadAssets(args: iGetAssets): Promise<void> {
+    async loadAssets(args: iPagination): Promise<void> {
       const user = useUserStore();
 
       if (!user.accessToken) {
@@ -50,22 +49,20 @@ export const useAssetStore = defineStore('assetStore', {
         return;
       }
 
-      const assets: Array<iAsset> | null = await getAssetsAPI({
-        limit: this.assetBatchSize,
-        ...args,
-      });
+      const assets: CancelablePromise<Asset[]> = await AssetsService.getPaginatedAssets({limit: this.assetBatchSize, ...args})
 
-      console.log(assets, "assets loaded in store")
-
+      console.log("Loaded new assets", assets)
+      
       if (!assets) return;
 
       this.assets = this.assets.concat(assets);
+      console.log("New total assets", this.assets.length)
     },
     async refreshAssets(): Promise<void> {
       this.clearAssets();
       this.loadAssets({});
     },
-    async setCurrentAssetById(id: number): Promise<void> {
+    async setCurrentAssetById(id: string): Promise<void> {
       // if (!this.getAssets){
       //   return
       // }
@@ -77,7 +74,7 @@ export const useAssetStore = defineStore('assetStore', {
       //   return
       // }
       console.log('loading asset from API');
-      const asset: iAsset | null = await getAssetById({ id: id });
+      const asset: CancelablePromise<Asset> = AssetsService.getAssetById({id: id})
 
       if (!asset) {
         // redirect to 404
@@ -89,7 +86,7 @@ export const useAssetStore = defineStore('assetStore', {
       this.currentAssetIndex = 0;
     },
     // iterate asset
-    async incrementAsset(step: number): Promise<iAsset | undefined> {
+    async incrementAsset(step: number): Promise<Asset | undefined> {
       const newIndex = this.getCurrentAssetIndex
         ? this.getCurrentAssetIndex + step
         : 0 + step;
@@ -131,7 +128,7 @@ export const useAssetStore = defineStore('assetStore', {
       // console.log(this.getCurrentAssetIndex, this.getCurrentAsset);
     },
     calculatePaginationIndex(index: number): number {
-      return index * this.assetBatchSize + this.assetBatchSize;
+      return (index - 1) * this.assetBatchSize + this.getAssets.length //  this.assetBatchSize;
     },
     clearAssets() {
       this.assets = [];
