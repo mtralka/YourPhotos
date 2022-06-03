@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { getAssetById, getAssets as getAssetsAPI } from 'src/api/assets';
-import { iAsset, iGetAssets } from 'src/api/models';
+import { getAssetById, getAssets as getAssetsAPI } from 'src/old_api/assets';
+import { iAsset, iGetAssets } from 'src/old_api/models';
 import { useUserStore } from './userStore';
 
 export interface assetState {

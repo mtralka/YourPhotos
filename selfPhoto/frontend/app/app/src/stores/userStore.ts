@@ -1,11 +1,11 @@
 import { api } from 'boot/axios';
 import { defineStore } from 'pinia';
-import { getAssets } from 'src/api/assets';
-import { getAccessToken } from 'src/api/auth';
+import { getAssets } from 'src/old_api/assets';
+import { getAccessToken } from 'src/old_api/auth';
 import {
   iAccessToken,
   iAsset, iGetAccessToken, iGetAssets
-} from 'src/api/models';
+} from 'src/old_api/models';
 
 export interface userState {
   accessToken: iAccessToken | null;
