@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 
 class CRUDGeocode(CRUDBase[Geocode, GeocodeCreate, GeocodeUpdate]):
-   ...
+    ...
 
 
 geocode = CRUDGeocode(Geocode)
